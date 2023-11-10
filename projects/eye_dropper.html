@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Niranjan Research</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+  <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+<style>
+/* Style the button that is used to open and close the collapsible content */
+.collapsible {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .collapsible:hover {
+  background-color: #ccc;
+}
+
+/* Style the collapsible content. Note: hidden by default */
+.content {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
+</style>
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__left">
+    <div class="stackedit__toc">
+      
+<ul>
+<li>
+<ul>
+<li></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+  </div>
+  <div class="stackedit__right">
+    <div class="stackedit__html">
+      <title>Automatic Eye Dropper</title>
+
+
+<h1>Automatic Eye Dropper</h1>
+<p>About 3 million Americans have glaucoma and a significant portion of them are the elderly who need help to take their eye drop medication. We design an automated eye-dropper that detects the patients eye, administers the eye drop and registers if the administration was successful. We modify a head-mounted display for this purpose and add an onboard computer that deals with the control processes.</p>
+<img src="../img/eye_dropper_thumbnail.png" alt="eye1" width="45%">
+<img src="../img/eye_dropper_side.png" alt="eye1"  width="45%" >
+
+<p style="text-align: center;">Open-Box cardboard prototype of our device. Top-view of the eye from the device(Left) Camera looks at the eye from the side(Right)</p>
+<h3>Eye Region Detection</h3>
+<p>To detect the patient's eye record a clip of the patient moving their eye. Because of the controlled nature of our setup we can compute the variance of the sequence of images and segment out the eye region. The variance can be color thresholded to give us a segmentation of the eye region. An example of the mean and variance is shown in the figure below.</p>
+<img src="../img/mean_eye.png" alt="Mean of frames" width="45%">
+<img src="../img/variance_eye.png" alt="Variance of frames" width="45%">
+<p style="text-align: center;">Mean of the image sequence we get from the camera(Left). Variance of the image sequence(Right)</p>
+<div style="display: flex; justify-content: center;">
+    <img class="center" src="../img/eye1.png" alt="eye1">
+    <img class="center" src="../img/eye2.png" alt="eye2">
+    <img class="center" src="../img/eye3.png" alt="eye3">
+    
+</div>
+<p style="text-align: center;">Example cropped eye region images</p>
+<h3>Blink Detection</h3>
+<p>We want to detect eye blinks of the patient so that we can plan when to administer the eye drop and know if it was successfully delivered. To detect blinks we collect videos from 25 patients with three different eye colors at three different illumination conditions. We have a total of 75 videos each 200 frames long. We automatically annotate the frames(as open/close) by asking the participants to actively open or close their eyes and synchronizing the commands with the realtime video sequence. We crop out the eye region and train a classifier to classify each frame as open or close. We train this classifier using the annotated videos we collected and successfully detect blinks.</p>
+<h3>Eye drop tracker</h3>
+<p>To control when and how much eye drops will be dispensed we design a motorized setup that can be controlled by the on-board computer. We 3D print the device and fix it on the head mounded device. We position the illumination such that the light from the LEDs gets total internally reflected and enters the camera. This illuminates the drop making it look as a bright white streak in the image. If we fit a line to this image using Hough Transform we get the trajectory of the water drop as shown in the figure below.</p>
+<img src="../img/waterdrop_hough.png" alt="hough Lines">
+<p style="text-align: center;">Trajectory of a water drop detected using Hough Line detection</p>
+
+
+
+    </div>
+  </div>
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+}
+</script>
+</body>
+
+</html>

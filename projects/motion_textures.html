@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Niranjan Research</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+  <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+<style>
+/* Style the button that is used to open and close the collapsible content */
+.collapsible {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .collapsible:hover {
+  background-color: #ccc;
+}
+
+/* Style the collapsible content. Note: hidden by default */
+.content {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
+</style>
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__left">
+    <div class="stackedit__toc">
+      
+<!-- <ul>
+<li><a href="#motion-textures">Motion Textures</a>
+<ul>
+<li></li>
+</ul>
+</li>
+</ul> -->
+
+    </div>
+  </div>
+  <div class="stackedit__right">
+    <div class="stackedit__html">
+      <h1 id="motion-textures">Motion Textures</h1>
+<p>With the advent of mobile cameras the number of photographs take every year has exploded. It has been estimated that at least 1.2 trillion photos will be taken in 2017. Although photographs are static, frozen instances of time, we often associate movement with certain elements contained in it. For example, if a waterfall is contained in the image, we can’t help but supplement it with the dynamic flowing motion of water.</p>
+<p>Elements such as waterfalls, clouds, smoke and fire have a unique pattern of movement that could often be looped around to create a continuous infinite video. These video clips can be viewed as textures in time or motion textures. Being able to generate motion textures out of static images would let people to selectively animate parts of a photograph, enriching it to create a pleasant viewing experience.</p>
+<h3>Mesh manipulation</h3>
+To create consecutive frames of the image we deform it by deconstructing the image region as a mesh and perturbing the vertices of the mesh.
+<ol>
+<li>
+<p>Get user input to segment the region of interest</p>
+</li>
+<li>
+<p>Get user input for motion direction</p>
+</li>
+<li>
+<p>Interpolate across the motion region to generate a flow field</p>
+</li>
+<li>
+<p>Select a set of points such that they lie in the motion region</p>
+</li>
+<li>
+<p>Move the mesh points in the direction specified by the flow field.</p>
+</li>
+<li>
+<p>Interpolate new triangle pixels from the triangles in the original image</p>
+</li>
+</ol>
+<img class="center" src="../img/meshwarp.jpg" alt="" title="Waterfall Mesh" height="270">
+
+<img  class="center" src="../img/spline_waterfall.png" alt="" title="Waterfall Spline" height="270">
+<br>
+Mesh that's used to deform the image(Left). Blue lines mark the direction of flow and red points represent the static regions of the masked image. A smooth flow field is created from this input with spline interpolation(Right)
+<h3>Spline Interpolation</h3>
+Another approach we tried was to use a Thin plate spline to generate a smooth flow field with typically fewer user interactions
+<ol>
+<li>
+<p>Select a few stationary and mobile marker points.</p>
+</li>
+<li>
+<p>Use TPS to interpolate between pixel displacement to create a smooth warp.</p>
+</li>
+<li>
+<p>Motion is spread over multiple frames to get a smooth transition over frames</p>
+</li>
+<li>
+<p>We deform the original source image everytime to get the new frames</p>
+</li>
+</ol>
+<p>We offer two approaches to segment the image.</p>
+<ol>
+<li>
+<p>Interactive segmentation with grab-cut</p>
+</li>
+<li>
+<p>CNN based image segmentation</p>
+</li>
+</ol>
+<p>We showcase some of our results below<br>
+<img src="../img/Smoke-output.gif" alt="" title="Waterfall Mesh"></p>
+<img src="../img/waterfall2.gif" alt="" title="Waterfall Spline">
+
+    </div>
+  </div>
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+}
+</script>
+</body>
+
+</html>

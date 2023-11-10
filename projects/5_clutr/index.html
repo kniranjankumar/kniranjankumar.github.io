@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Niranjan Research</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+  <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+<style>
+/* Style the button that is used to open and close the collapsible content */
+.collapsible {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .collapsible:hover {
+  background-color: #ccc;
+}
+
+/* Style the collapsible content. Note: hidden by default */
+.content {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
+</style>
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__left">
+    <div class="stackedit__toc">
+    </div>
+  </div>
+  <div class="stackedit__right">
+    <div class="stackedit__html">
+      <h1 id="graph-based-cluttered-scene-generation-and-interactive-exploration-using-deep-reinforcement-learning">Graph-based Cluttered Scene Generation and Interactive Exploration using Deep Reinforcement Learning</h1>
+<p>We introduce a novel method to teach a robotic agent to interactively explore cluttered yet structured scenes, such as kitchen pantries and grocery shelves, by leveraging the physical plausibility of the scene. We propose a novel learning framework to train an effective scene exploration policy to discover hidden objects with minimal interactions.</p>
+<p>First, we define a novel scene grammar to represent structured clutter. Then we train a Graph Neural Network (GNN) based <em>Scene Generation</em> agent using deep reinforcement learning (deep RL), to manipulate this <em>Scene Grammar</em> to create a diverse set of stable scenes, each containing multiple hidden objects.</p>
+<p>Given such cluttered scenes, we then train a <em>Scene Exploration</em> agent, using deep RL, to uncover hidden objects by interactively rearranging the scene.</p>
+<h1 id="grammar-rules">Grammar Rules</h1>
+<p>Below is a list of all the grammar rules used in our experiments (7 objects)</p>
+<img src="../img/clutter/grammar_rules.png" alt="Grammar Rules" width="800">
+<h2 id="links">Links:</h2>
+<p>14 object dataset source: <a href="https://www.turbosquid.com/3d-models/3d-model-supermarket-shelves-pack-pasta/1089057">https://www.turbosquid.com/3d-models/3d-model-supermarket-shelves-pack-pasta/1089057</a></p>
+
+    </div>
+  </div>
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+}
+</script>
+</body>
+
+</html>

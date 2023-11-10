@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Niranjan Research</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+  <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+<style>
+/* Style the button that is used to open and close the collapsible content */
+
+
+</style>
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__left">
+    <div class="stackedit__toc">
+
+    </div>
+  </div>
+  <div class="stackedit__right">
+    <div class="stackedit__html">
+      <h1 id="generating-realistic-hand-manipulations">Generating realistic hand manipulations</h1>
+<p>We generate realistic hand manipulations of object by using a Generative Adversarial Network by conditioning on the hand and finger pose. We adopt an encoder-decoder architecture where we input a rough rendering of the skeletal pose and get a realistic rendering of a hand as the output. We generate datasets with simulated and real human arms at different poses and use it to train our model. Given an hand pose and object pose we showcase a pipeline to generate an image conditioned on the poses.</p>
+<div class="img_row">
+</div><img src="../img/skeleton_hand.png" alt="" title="Pose 1" width="30%">
+<img src="../img/skeleton_hand2.png" alt="" title="Pose 2" width="30%">
+<img src="../img/skeleton_hand3.png" alt="" title="Pose 3" width="30%">
+
+<div class="col three caption">
+</div><p>Example skeletal poses that we feed in as input to the network</p>
+<div class="img_row2">
+</div><img src="../img/real_hand.png" alt="" title="Generated Image 1" width="30%">
+<img src="../img/real_hand2.png" alt="" title="Generated Image 2" width="30%">
+<img src="../img/real_hand3.png" alt="" title="Generated Image 3" width="30%">
+
+<div class="col three caption">
+</div><p>Generated frames from our network</p>
+<div class="img_row2">
+</div><div class="img_row3">
+</div><img src="../img/hand_move.gif" alt="" title="Object Manipulation">
+<div class="col three caption">
+</div><p>Using our network we can generate a sequence of frames that showcase an object interaction</p>
+
+    </div>
+  </div>
+
+</body>
+
+</html>
