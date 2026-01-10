@@ -1,13 +1,13 @@
 
 const planData = [
     {
-        time: "2026-01-10T15:00:00",
+        time: "2026-01-10T13:00:00",
         title: "Chapter I: Departure from the Valley",
         destination: "Santa Clara → San Francisco",
         prep: [
             "Departure: 3:00 PM from Santa Clara.",
             "Pack your knitting/crochet and a good book for the ride.",
-            "Dress for a literary evening — we have dinner reservations."
+            "Pack and dress for a literary trip — we have dinner reservations."
         ]
     },
     {
