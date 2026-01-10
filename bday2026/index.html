@@ -5,6 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THE SAN FRANCISCO CHRONICLES // VOL.2026</title>
+    <!-- PWA Manifest for iOS -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SF Chronicles">
+    <link rel="apple-touch-icon" href="map_background.png">
     <link
         href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Source+Code+Pro:wght@400;600&display=swap"
         rel="stylesheet">
@@ -669,6 +675,7 @@
             const boxes = document.querySelectorAll('.char-box:not(.separator)');
             const input = Array.from(boxes).map(b => b.value.toLowerCase()).join('');
             if (input === SECRET_PASSWORD) {
+                registerServiceWorker();
                 requestNotificationPermission();
                 initializeUnlockedChapters();
                 // Check for unlocks every 30 seconds
@@ -676,6 +683,38 @@
             }
             originalCheckPass();
         };
+
+        // Register Service Worker for iOS PWA notifications
+        let swRegistration = null;
+
+        async function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                try {
+                    swRegistration = await navigator.serviceWorker.register('sw.js');
+                    console.log('Service Worker registered');
+                } catch (error) {
+                    console.log('Service Worker registration failed:', error);
+                }
+            }
+        }
+
+        // Updated notification function to use Service Worker
+        function sendNotification(title, body) {
+            // Try Service Worker notification first (works on iOS PWA)
+            if (swRegistration && swRegistration.active) {
+                swRegistration.active.postMessage({
+                    type: 'SHOW_NOTIFICATION',
+                    title: title,
+                    body: body
+                });
+            } else if ('Notification' in window && Notification.permission === 'granted') {
+                // Fallback to regular notification
+                new Notification(title, {
+                    body: body,
+                    icon: 'map_background.png'
+                });
+            }
+        }
     </script>
 </body>
 
