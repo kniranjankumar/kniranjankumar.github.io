@@ -514,9 +514,87 @@
     <script>
         const SECRET_PASSWORD = "longisland";
 
-        // Setup character box navigation
+        // ===== SOUND EFFECTS =====
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            // Resume context if suspended (iOS requirement)
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            switch (type) {
+                case 'type':
+                    // Short high beep for typing
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(800 + Math.random() * 200, now);
+                    gainNode.gain.setValueAtTime(0.1, now);
+                    gainNode.gain.exponentialDecayTo ? gainNode.gain.exponentialDecayTo(0.01, now + 0.05) : gainNode.gain.setValueAtTime(0.01, now + 0.05);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.05);
+                    break;
+
+                case 'click':
+                    // Deeper click for buttons
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(200, now);
+                    oscillator.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+                    gainNode.gain.setValueAtTime(0.15, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.1);
+                    break;
+
+                case 'success':
+                    // Rising chime for success
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(400, now);
+                    oscillator.frequency.exponentialRampToValueAtTime(800, now + 0.15);
+                    oscillator.frequency.exponentialRampToValueAtTime(1200, now + 0.3);
+                    gainNode.gain.setValueAtTime(0.2, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.4);
+                    break;
+
+                case 'unlock':
+                    // Magical unlock sound
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(600, now);
+                    oscillator.frequency.exponentialRampToValueAtTime(900, now + 0.1);
+                    oscillator.frequency.exponentialRampToValueAtTime(1100, now + 0.2);
+                    oscillator.frequency.exponentialRampToValueAtTime(1400, now + 0.35);
+                    gainNode.gain.setValueAtTime(0.25, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.5);
+                    break;
+
+                case 'error':
+                    // Error buzz
+                    oscillator.type = 'sawtooth';
+                    oscillator.frequency.setValueAtTime(150, now);
+                    gainNode.gain.setValueAtTime(0.15, now);
+                    gainNode.gain.setValueAtTime(0.01, now + 0.2);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.2);
+                    break;
+            }
+        }
+
+        // Setup character box navigation with sounds
         document.querySelectorAll('.char-box:not(.separator)').forEach((box, index, boxes) => {
             box.addEventListener('input', (e) => {
+                if (box.value.length > 0) {
+                    playSound('type');
+                }
                 box.classList.toggle('filled', box.value.length > 0);
                 if (box.value.length === 1 && index < boxes.length - 1) {
                     boxes[index + 1].focus();
@@ -531,10 +609,14 @@
                     boxes[index - 1].focus();
                 }
                 if (e.key === 'Enter') {
+                    playSound('click');
                     checkPass();
                 }
             });
         });
+
+        // Add click sound to button
+        document.querySelector('button').addEventListener('click', () => playSound('click'));
 
         // Marker positions (percentage from top-left)
         const markerPositions = [
@@ -548,10 +630,12 @@
             const boxes = document.querySelectorAll('.char-box:not(.separator)');
             const input = Array.from(boxes).map(b => b.value.toLowerCase()).join('');
             if (input === SECRET_PASSWORD) {
+                playSound('success');
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('map-container').style.display = 'block';
                 renderMarkers();
             } else {
+                playSound('error');
                 alert("ACCESS DENIED // Invalid authentication code");
                 boxes.forEach(b => { b.value = ''; b.classList.remove('filled'); });
                 boxes[0].focus();
@@ -644,6 +728,7 @@
 
                     // Only send notification if not the initial load
                     if (unlockedChapters.size > 0) {
+                        playSound('unlock');
                         sendNotification(
                             '🔓 New Chapter Unlocked!',
                             `${entry.title} is now available. Destination: ${entry.destination}`
