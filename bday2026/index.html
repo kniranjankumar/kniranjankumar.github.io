@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE BIRTHDAY PROTOCOL // VOL.2026</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Source+Code+Pro:wght@400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --text-color: #e0e0e0;
+            --neon-cyan: #00ffff;
+            --neon-magenta: #ff00ff;
+            --neon-blue: #00d4ff;
+            --neon-pink: #ff6ec7;
+            --glow-cyan: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+            --glow-magenta: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-color);
+            font-family: 'Source Code Pro', monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background-image:
+                radial-gradient(ellipse at 50% 0%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 100% 100%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
+        }
+
+        /* Scanline overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(0deg,
+                    rgba(0, 0, 0, 0.1) 0px,
+                    rgba(0, 0, 0, 0.1) 1px,
+                    transparent 1px,
+                    transparent 3px);
+            z-index: 9999;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-cyan);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: var(--glow-cyan);
+        }
+
+        /* Login Screen */
+        #login-screen {
+            background: var(--bg-card);
+            padding: 50px;
+            border: 1px solid var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2), inset 0 0 30px rgba(0, 255, 255, 0.05);
+            text-align: center;
+            max-width: 500px;
+            position: relative;
+        }
+
+        #login-screen::before {
+            content: "// SECURE ACCESS TERMINAL";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--bg-dark);
+            padding: 0 10px;
+            font-size: 0.75em;
+            color: var(--neon-magenta);
+            text-shadow: var(--glow-magenta);
+        }
+
+        #login-screen h1 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        #login-screen p {
+            color: var(--neon-pink);
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        input {
+            padding: 14px;
+            border: 1px solid var(--neon-cyan);
+            background: rgba(0, 255, 255, 0.05);
+            color: var(--neon-cyan);
+            font-family: 'Source Code Pro', monospace;
+            font-size: 1.1em;
+            width: 80%;
+            margin-bottom: 20px;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            box-shadow: var(--glow-cyan);
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        input::placeholder {
+            color: rgba(0, 255, 255, 0.5);
+        }
+
+        button {
+            padding: 14px 40px;
+            background: transparent;
+            color: var(--neon-magenta);
+            border: 2px solid var(--neon-magenta);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1em;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: var(--neon-magenta);
+            color: var(--bg-dark);
+            box-shadow: var(--glow-magenta);
+        }
+
+        /* Map Container */
+        #map-container {
+            display: none;
+            width: 100%;
+            max-width: 900px;
+            position: relative;
+        }
+
+        #map-title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #map-title h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        #map-title span {
+            font-size: 0.85em;
+            color: var(--neon-magenta);
+            text-shadow: var(--glow-magenta);
+        }
+
+        #map {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background-image: url('map_background.png');
+            background-size: cover;
+            background-position: center;
+            border: 2px solid var(--neon-cyan);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3), inset 0 0 50px rgba(0, 0, 0, 0.5);
+            transition: transform 0.6s ease, background-position 0.6s ease;
+            transform-origin: center center;
+            overflow: hidden;
+        }
+
+        #map.zoomed {
+            transform: scale(1.5);
+        }
+
+        /* Markers */
+        .marker {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: var(--bg-dark);
+            border: 3px solid var(--neon-cyan);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--glow-cyan);
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+            }
+
+            50% {
+                box-shadow: 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-cyan), 0 0 60px var(--neon-cyan);
+            }
+        }
+
+        .marker:hover {
+            transform: scale(1.2);
+            background: var(--neon-cyan);
+            border-color: #fff;
+        }
+
+        .marker:hover .marker-number {
+            color: var(--bg-dark);
+        }
+
+        .marker-number {
+            color: var(--neon-cyan);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .marker.locked {
+            border-color: #444;
+            box-shadow: none;
+            cursor: not-allowed;
+            opacity: 0.4;
+            animation: none;
+        }
+
+        .marker.locked:hover {
+            transform: none;
+            background: var(--bg-dark);
+        }
+
+        /* Modal */
+        #modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        #modal {
+            background: var(--bg-card);
+            max-width: 550px;
+            width: 90%;
+            padding: 40px;
+            position: relative;
+            border: 2px solid var(--neon-magenta);
+            box-shadow: 0 0 40px rgba(255, 0, 255, 0.4), inset 0 0 30px rgba(255, 0, 255, 0.05);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        #modal::before {
+            content: "// DATA PACKET DECRYPTED";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--bg-dark);
+            padding: 0 10px;
+            font-size: 0.75em;
+            color: var(--neon-cyan);
+            text-shadow: var(--glow-cyan);
+        }
+
+        #modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.8em;
+            cursor: pointer;
+            color: var(--neon-magenta);
+            transition: all 0.2s;
+        }
+
+        #modal-close:hover {
+            text-shadow: var(--glow-magenta);
+            transform: scale(1.2);
+        }
+
+        #modal h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-cyan);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        #modal .status-tag {
+            display: inline-block;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            padding: 6px 15px;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        #modal .destination {
+            font-size: 1em;
+            margin-bottom: 20px;
+            color: var(--neon-pink);
+        }
+
+        #modal .destination strong {
+            color: var(--text-color);
+        }
+
+        #modal .prep-box {
+            background: rgba(255, 0, 255, 0.05);
+            padding: 20px;
+            border-left: 3px solid var(--neon-magenta);
+            line-height: 1.8;
+        }
+
+        #modal .prep-box strong {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--neon-magenta);
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 1px;
+        }
+
+        /* SF Easter Egg */
+        .sf-tagline {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.8em;
+            color: var(--neon-pink);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="login-screen">
+        <h1>ACCESS TERMINAL</h1>
+        <p>"The future belongs to those who believe in the beauty of their stories."</p>
+        <input type="password" id="pass-input" placeholder="ENTER ACCESS CODE...">
+        <br>
+        <button onclick="checkPass()">INITIALIZE</button>
+    </div>
+
+    <div id="map-container">
+        <div id="map-title">
+            <h1>THE BIRTHDAY PROTOCOL</h1>
+            <span>// VOL.2026 &mdash; SAN FRANCISCO GRID</span>
+        </div>
+        <div id="map">
+            <!-- Markers will be placed here by JS -->
+        </div>
+        <p class="sf-tagline">[ Navigating the streets of Neo-San Francisco ]</p>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal-overlay" onclick="closeModal(event)">
+        <div id="modal">
+            <span id="modal-close" onclick="closeModal()">&times;</span>
+            <div class="status-tag" id="modal-status">DECRYPTED</div>
+            <h2 id="modal-title"></h2>
+            <p class="destination"><strong>TARGET:</strong> <span id="modal-destination"></span></p>
+            <div class="prep-box">
+                <strong>// Mission Brief</strong>
+                <div id="modal-notes"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="plan.js"></script>
+    <script>
+        const SECRET_PASSWORD = "birthday2026";
+
+        // Marker positions (percentage from top-left)
+        const markerPositions = [
+            { top: 85, left: 90 },  // Chapter 1: Outside SF (bottom-right, starting point)
+            { top: 25, left: 60 },
+            { top: 60, left: 75 },
+            { top: 70, left: 40 }
+        ];
+
+        function checkPass() {
+            const input = document.getElementById('pass-input').value;
+            if (input === SECRET_PASSWORD) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('map-container').style.display = 'block';
+                renderMarkers();
+            } else {
+                alert("ACCESS DENIED // Invalid authentication code");
+            }
+        }
+
+        function renderMarkers() {
+            const map = document.getElementById('map');
+            map.innerHTML = '';
+
+            planData.forEach((entry, index) => {
+                const now = new Date();
+                const revealTime = new Date(entry.time);
+                const isUnlocked = true; // Time filter removed for testing
+
+                const marker = document.createElement('div');
+                marker.className = 'marker' + (isUnlocked ? '' : ' locked');
+                marker.style.top = markerPositions[index].top + '%';
+                marker.style.left = markerPositions[index].left + '%';
+                marker.innerHTML = `<span class="marker-number">${index + 1}</span>`;
+
+                if (isUnlocked) {
+                    marker.onclick = () => openModal(index);
+                }
+
+                map.appendChild(marker);
+            });
+        }
+
+        function openModal(index) {
+            const entry = planData[index];
+            const marker = markerPositions[index];
+
+            // Zoom into the marker location
+            const map = document.getElementById('map');
+            map.classList.add('zoomed');
+            map.style.transformOrigin = `${marker.left}% ${marker.top}%`;
+
+            document.getElementById('modal-title').innerText = entry.title;
+            document.getElementById('modal-destination').innerText = entry.destination;
+
+            const notesList = entry.prep.map(note => `&gt; ${note}`).join('<br>');
+            document.getElementById('modal-notes').innerHTML = notesList;
+
+            document.getElementById('modal-overlay').style.display = 'flex';
+        }
+
+        function closeModal(event) {
+            if (!event || event.target.id === 'modal-overlay' || event.target.id === 'modal-close') {
+                document.getElementById('modal-overlay').style.display = 'none';
+                // Zoom out
+                document.getElementById('map').classList.remove('zoomed');
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.getElementById('modal-overlay').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>
