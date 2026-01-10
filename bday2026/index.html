@@ -606,6 +606,76 @@
                 document.getElementById('modal-overlay').style.display = 'none';
             }
         });
+
+        // ===== NOTIFICATION SYSTEM =====
+        let unlockedChapters = new Set();
+
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+
+        function sendNotification(title, body) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(title, {
+                    body: body,
+                    icon: 'map_background.png',
+                    badge: 'map_background.png'
+                });
+            }
+        }
+
+        function checkForNewUnlocks() {
+            const now = new Date();
+
+            planData.forEach((entry, index) => {
+                const revealTime = new Date(entry.time);
+                const chapterKey = `chapter-${index}`;
+
+                if (now >= revealTime && !unlockedChapters.has(chapterKey)) {
+                    unlockedChapters.add(chapterKey);
+
+                    // Only send notification if not the initial load
+                    if (unlockedChapters.size > 0) {
+                        sendNotification(
+                            '🔓 New Chapter Unlocked!',
+                            `${entry.title} is now available. Destination: ${entry.destination}`
+                        );
+                    }
+
+                    // Refresh markers
+                    if (document.getElementById('map-container').style.display === 'block') {
+                        renderMarkers();
+                    }
+                }
+            });
+        }
+
+        // Initialize unlocked chapters on page load (without notifications)
+        function initializeUnlockedChapters() {
+            const now = new Date();
+            planData.forEach((entry, index) => {
+                const revealTime = new Date(entry.time);
+                if (now >= revealTime) {
+                    unlockedChapters.add(`chapter-${index}`);
+                }
+            });
+        }
+
+        // Start checking when logged in
+        const originalCheckPass = checkPass;
+        checkPass = function () {
+            const boxes = document.querySelectorAll('.char-box:not(.separator)');
+            const input = Array.from(boxes).map(b => b.value.toLowerCase()).join('');
+            if (input === SECRET_PASSWORD) {
+                requestNotificationPermission();
+                initializeUnlockedChapters();
+                // Check for unlocks every 30 seconds
+                setInterval(checkForNewUnlocks, 30000);
+            }
+            originalCheckPass();
+        };
     </script>
 </body>
 
