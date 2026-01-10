@@ -1,7 +1,7 @@
 
 const planData = [
     {
-        time: "2026-01-10T13:00:00",
+        time: "2026-01-10T13:00:00-08:00",
         title: "Chapter I: Departure from the Valley",
         destination: "Santa Clara → San Francisco",
         prep: [
@@ -11,7 +11,7 @@ const planData = [
         ]
     },
     {
-        time: "2026-01-10T16:00:00",
+        time: "2026-01-10T16:00:00-08:00",
         title: "Chapter II: The Literary Sanctuary",
         destination: "Hotel Emblem San Francisco",
         prep: [
@@ -20,7 +20,7 @@ const planData = [
         ]
     },
     {
-        time: "2026-01-10T19:00:00",
+        time: "2026-01-10T19:00:00-08:00",
         title: "Chapter III: A Toast to Great Characters",
         destination: "Novela",
         prep: [
@@ -29,7 +29,7 @@ const planData = [
         ]
     },
     {
-        time: "2026-01-11T07:00:00",
+        time: "2026-01-11T07:00:00-08:00",
         title: "Chapter IV: The Morning Prologue",
         destination: "Réveille Coffee Co.",
         prep: [
