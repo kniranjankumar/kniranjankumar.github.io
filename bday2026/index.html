@@ -101,27 +101,45 @@
             font-style: italic;
         }
 
-        input {
-            padding: 14px;
-            border: 1px solid var(--neon-cyan);
+        .char-box-container {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .char-box {
+            width: 40px;
+            height: 50px;
+            padding: 0;
+            border: 2px solid var(--neon-cyan);
             background: rgba(0, 255, 255, 0.05);
             color: var(--neon-cyan);
-            font-family: 'Source Code Pro', monospace;
-            font-size: 1.1em;
-            width: 80%;
-            margin-bottom: 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5em;
             text-align: center;
             outline: none;
             transition: all 0.3s;
+            text-transform: lowercase;
         }
 
-        input:focus {
+        .char-box:focus {
             box-shadow: var(--glow-cyan);
-            background: rgba(0, 255, 255, 0.1);
+            background: rgba(0, 255, 255, 0.15);
+            border-color: #fff;
         }
 
-        input::placeholder {
-            color: rgba(0, 255, 255, 0.5);
+        .char-box.filled {
+            background: rgba(0, 255, 255, 0.2);
+        }
+
+        .char-box.separator {
+            border: none;
+            background: transparent;
+            width: 20px;
+            font-size: 2em;
+            color: var(--neon-magenta);
         }
 
         button {
@@ -381,9 +399,20 @@
 
     <div id="login-screen">
         <h1>ACCESS TERMINAL</h1>
-        <p>"The future belongs to those who believe in the beauty of their stories."</p>
-        <input type="password" id="pass-input" placeholder="ENTER ACCESS CODE...">
-        <br>
+        <p>To start the journey, enter our first shared drink which is also a place.</p>
+        <div class="char-box-container" id="char-boxes">
+            <input type="text" class="char-box" maxlength="1" data-index="0">
+            <input type="text" class="char-box" maxlength="1" data-index="1">
+            <input type="text" class="char-box" maxlength="1" data-index="2">
+            <input type="text" class="char-box" maxlength="1" data-index="3">
+            <div class="char-box separator">-</div>
+            <input type="text" class="char-box" maxlength="1" data-index="4">
+            <input type="text" class="char-box" maxlength="1" data-index="5">
+            <input type="text" class="char-box" maxlength="1" data-index="6">
+            <input type="text" class="char-box" maxlength="1" data-index="7">
+            <input type="text" class="char-box" maxlength="1" data-index="8">
+            <input type="text" class="char-box" maxlength="1" data-index="9">
+        </div>
         <button onclick="checkPass()">INITIALIZE</button>
     </div>
 
@@ -414,7 +443,29 @@
 
     <script src="plan.js"></script>
     <script>
-        const SECRET_PASSWORD = "birthday2026";
+        const SECRET_PASSWORD = "longisland";
+
+        // Setup character box navigation
+        document.querySelectorAll('.char-box:not(.separator)').forEach((box, index, boxes) => {
+            box.addEventListener('input', (e) => {
+                box.classList.toggle('filled', box.value.length > 0);
+                if (box.value.length === 1 && index < boxes.length - 1) {
+                    boxes[index + 1].focus();
+                }
+                // Auto-submit when last box is filled
+                if (index === boxes.length - 1 && box.value.length === 1) {
+                    setTimeout(() => checkPass(), 100);
+                }
+            });
+            box.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && box.value === '' && index > 0) {
+                    boxes[index - 1].focus();
+                }
+                if (e.key === 'Enter') {
+                    checkPass();
+                }
+            });
+        });
 
         // Marker positions (percentage from top-left)
         const markerPositions = [
@@ -425,13 +476,16 @@
         ];
 
         function checkPass() {
-            const input = document.getElementById('pass-input').value;
+            const boxes = document.querySelectorAll('.char-box:not(.separator)');
+            const input = Array.from(boxes).map(b => b.value.toLowerCase()).join('');
             if (input === SECRET_PASSWORD) {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('map-container').style.display = 'block';
                 renderMarkers();
             } else {
                 alert("ACCESS DENIED // Invalid authentication code");
+                boxes.forEach(b => { b.value = ''; b.classList.remove('filled'); });
+                boxes[0].focus();
             }
         }
 
