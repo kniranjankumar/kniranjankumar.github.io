@@ -442,7 +442,7 @@
             planData.forEach((entry, index) => {
                 const now = new Date();
                 const revealTime = new Date(entry.time);
-                const isUnlocked = true; // Time filter removed for testing
+                const isUnlocked = now >= revealTime;
 
                 const marker = document.createElement('div');
                 marker.className = 'marker' + (isUnlocked ? '' : ' locked');

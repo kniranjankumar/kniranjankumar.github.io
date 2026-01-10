@@ -29,7 +29,7 @@ const planData = [
         ]
     },
     {
-        time: "2026-01-11T09:00:00",
+        time: "2026-01-11T07:00:00",
         title: "Chapter IV: The Morning Prologue",
         destination: "Réveille Coffee Co.",
         prep: [
