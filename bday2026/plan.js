@@ -19,7 +19,7 @@ const planData = [
             "Tonight is about the stories we create."]
     },
     {
-        time: "2026-01-10T19:00:00-08:00",
+        time: "2026-01-10T18:00:00-08:00",
         title: "Chapter III: We might be old, but the night is young",
         destination: "Novela",
         prep: [
